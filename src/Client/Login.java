@@ -8,10 +8,14 @@ import java.io.Serializable;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+
+import Manager.Setting;
+import Manager.Shoppingmall;
 
 public class Login extends JFrame implements ActionListener, Serializable {
 	JPanel nP, cP, sP, eP;
@@ -19,10 +23,10 @@ public class Login extends JFrame implements ActionListener, Serializable {
 	JTextField idField, pwdField, loginField;
 	JButton loginBtn, joinBtn;
 	ClientChat client = null;
+	private static MsCenter mc = MsCenter.getInstance();
 
-	Login(ClientChat client) {
+	Login() {
 		super("로그인");
-		this.client = client;
 		createpanel();
 		setClose();
 	}
@@ -84,7 +88,7 @@ public class Login extends JFrame implements ActionListener, Serializable {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					String[] check = { idField.getText(), pwdField.getText(), "login" };
-					client.streamSet(check);
+					mc.setObject(check);
 
 				} catch (Exception e1) {
 					e1.printStackTrace();
@@ -104,10 +108,30 @@ public class Login extends JFrame implements ActionListener, Serializable {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Signup(client);
+				new Signup();
 			}
 
 		});
+	}
+
+	public void loginresult(String msg) {
+		if (msg.contains("login/yes/1")) {
+			JOptionPane.showMessageDialog(null, "로그인 완료");
+			dispose();
+			new Shoppingmall();
+			System.out.println("쇼핑몰고고");
+		} else if (msg.contains("login/yes/5")) {
+			JOptionPane.showMessageDialog(null, "로그인 완료");
+			dispose();
+			new Setting();
+			System.out.println("세팅고고");
+		} else if (msg.contains("login/no")) {
+			JOptionPane.showMessageDialog(null, "존재하지 않는 아이디거나 비밀번호가 맞지 않습니다.");
+			// setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			idField.setText("");
+			pwdField.setText("");
+		}
+
 	}
 
 }

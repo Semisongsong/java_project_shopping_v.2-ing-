@@ -2,6 +2,7 @@ package Server;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -11,69 +12,59 @@ import java.net.Socket;
 
 public class ServerChat extends Thread {
 	private Socket withClient = null;
+	private Socket withClient2 = null;
 	private InputStream reMsg = null;
 	private OutputStream sendMsg = null;
 	private String id = null;
 	private String[] check = null;
 	private ServerCenter sc = null;
+	private ServerChat chat = null;
 	String msg = null;
 
-	ServerChat(Socket withClient, ServerCenter sc) {
+	ServerChat(Socket withClient, Socket withClient2, ServerCenter sc) {
 		this.withClient = withClient;
+		this.withClient2 = withClient2;
 		this.sc = sc;
+		chat = this;
 		// streamSet();
 		// receive(msg);
+		receiveObject();
+		sendStream(msg);
 	}
 
-	@Override
-	public void run() {
-		streamSet();
-		send(msg);
-		// send();
-	}
+//	@Override
+//	public void run() {
+//		streamSet();
+//		send(msg);
+//		// send();
+//	}
 
-	public void send(String msg) {
+	public void sendStream(String msg) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					while (true) {
-						if (msg != null) {
-							System.out.println("여기는 서버챗인데 받은 메세지를 확인해볼것이야 : " + msg);
-							sendMsg = withClient.getOutputStream();
-							System.out.println("이번엔 어디까지 간거니??");
-							sendMsg.write(msg.getBytes());
-							System.out.println("서버에서 메세지를 보냈어요");
-						}
+					// while (true) {
+					if (msg != null) {
+						System.out.println("여기는 서버챗인데 받은 메세지를 확인해볼것이야 : " + msg);
+						sendMsg = withClient2.getOutputStream();
+						sendMsg.write(msg.getBytes());
+						System.out.println("서버에서 메세지를 보냈어요");
 					}
-//			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//			ObjectOutputStream oos = new ObjectOutputStream(baos);
-//			oos.writeObject(msg);
-//
-//			byte[] bowl = baos.toByteArray();
-//
-//			sendMsg = withClient.getOutputStream();
-//
-//			sendMsg.write(bowl);
-//			System.out.println("보내기 완료");
-
-				}
-
-				catch (Exception e) {
-					// TODO: handle exception
+				} catch (Exception e) {
 				}
 			}
 		}).start();
 
 	}
 
-	public void streamSet() {
+	public void receiveObject() {
+
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					while (true) {
-
 						reMsg = withClient.getInputStream();
 						byte[] reBuffer = new byte[1024];
 						reMsg.read(reBuffer);
@@ -90,21 +81,11 @@ public class ServerChat extends Thread {
 								System.out.println(check[i]);
 								id = check[0];
 							}
-							sc.select(check);
-
-//							String txt = "정상접속 되었습니다.";
-//							sendMsg = withClient.getOutputStream();
-//							sendMsg.write(txt.getBytes());
+							sc.select(check,chat);
 						}
-
-						InetAddress c_ip = withClient.getInetAddress();
-						String ip = c_ip.getHostAddress();
-
-						System.out.println(id + "님 로그인 (" + ip + ")");
 					}
 
 				} catch (Exception e) {
-					// TODO: handle exception
 				}
 			}
 		}).start();

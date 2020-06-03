@@ -25,6 +25,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import DB.ManagementDAO;
+import DB.ManagementDTO;
+
 
 public class Setting extends JFrame {
 
@@ -132,7 +135,7 @@ public class Setting extends JFrame {
 					txtfield[i].setText("");
 				}
 				tablemodel.addRow(in);
-				saveToDB(in);
+				//saveToDB(in);
 			}
 
 		});
@@ -149,7 +152,7 @@ public class Setting extends JFrame {
 				}
 				delTableRow(modIntRow);
 				tablemodel.insertRow(modIntRow, in);
-				editToDB(in);
+				//editToDB(in);
 				modIntRow = -1;
 			}
 		});
@@ -165,7 +168,7 @@ public class Setting extends JFrame {
 					in[i] = txtfield[i].getText();
 					txtfield[i].setText("");
 				}
-				delToDB(in);
+				//delToDB(in);
 				delTableRow(table.getSelectedRow());
 			}
 		});
@@ -189,42 +192,42 @@ public class Setting extends JFrame {
 
 	}
 
-	private void saveToDB(String[] in) {
-		dto = new ManagementDTO();
-		int code = Integer.parseInt(in[0]);
-		dto.setCode(code);
-		dto.setCname(in[1]);
-		int cnt = Integer.parseInt(in[2]);
-		dto.setCnt(cnt);
-		int price = Integer.parseInt(in[3]);
-		dto.setPrice(price);
-		dao.Insert(dto);
+//	private void saveToDB(String[] in) {
+//		dto = new ManagementDTO();
+//		int code = Integer.parseInt(in[0]);
+//		dto.setCode(code);
+//		dto.setCname(in[1]);
+//		int cnt = Integer.parseInt(in[2]);
+//		dto.setCnt(cnt);
+//		int price = Integer.parseInt(in[3]);
+//		dto.setPrice(price);
+//		dao.Insert(dto);
+//
+//	}
 
-	}
+//	private void editToDB(String[] in) {
+//		dto = new ManagementDTO();
+//		int code = Integer.parseInt(in[0]);
+//		dto.setCode(code);
+//		dto.setCname(in[1]);
+//		int cnt = Integer.parseInt(in[2]);
+//		dto.setCnt(cnt);
+//		int price = Integer.parseInt(in[3]);
+//		dto.setPrice(price);
+//		dao.editinfo(dto);
+//	}
 
-	private void editToDB(String[] in) {
-		dto = new ManagementDTO();
-		int code = Integer.parseInt(in[0]);
-		dto.setCode(code);
-		dto.setCname(in[1]);
-		int cnt = Integer.parseInt(in[2]);
-		dto.setCnt(cnt);
-		int price = Integer.parseInt(in[3]);
-		dto.setPrice(price);
-		dao.editinfo(dto);
-	}
-
-	private void delToDB(String[] in) {
-		dto = new ManagementDTO();
-		int code = Integer.parseInt(in[0]);
-		dto.setCode(code);
-		dto.setCname(in[1]);
-		int cnt = Integer.parseInt(in[2]);
-		dto.setCnt(cnt);
-		int price = Integer.parseInt(in[3]);
-		dto.setPrice(price);
-		dao.delinfo(dto);
-	}
+//	private void delToDB(String[] in) {
+//		dto = new ManagementDTO();
+//		int code = Integer.parseInt(in[0]);
+//		dto.setCode(code);
+//		dto.setCname(in[1]);
+//		int cnt = Integer.parseInt(in[2]);
+//		dto.setCnt(cnt);
+//		int price = Integer.parseInt(in[3]);
+//		dto.setPrice(price);
+//		dao.delinfo(dto);
+//	}
 
 	private void delTableRow(int row) {
 		tablemodel.removeRow(row);

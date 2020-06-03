@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,15 +34,18 @@ public class Signup extends JFrame {
 	private JTextField tfPhone;
 	private static ClientChat ch = null;
 	String msg = null;
+	Socket chh = null;
+	private static MsCenter mc = MsCenter.getInstance();
+	private Signup join = null;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		Signup frame = new Signup();
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Signup frame = new Signup(ch);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -50,14 +54,15 @@ public class Signup extends JFrame {
 		});
 	}
 
-	public Signup(ClientChat ch) {
-		this.ch = ch;
+	public Signup() {
+		// this.ch = withServer;
+		join = this;
 		createjlabel();
 		createtxtfield();
 		createbtn();
 		jbchk();
 		Pwdchk();
-		complete(msg);
+		complete();
 	}
 
 	private void createjlabel() {
@@ -230,8 +235,8 @@ public class Signup extends JFrame {
 				try {
 					String[] check = { tfUsername.getText(), "check" };
 					String mm = "check";
-
-					ch.streamSet(check);
+					mc.setObjectforjoin(check, join);
+					// ch.streamSet(check);
 
 					// MemberDAO dao = MemberDAO.getInstance();
 					// Boolean result = dao.idchk(member);
@@ -252,7 +257,18 @@ public class Signup extends JFrame {
 		});
 	}
 
-	public void complete(String msg) {
+	public void dup(String msg) {
+		if (msg.equals("check/no")) {
+			JOptionPane.showMessageDialog(null, "이미 사용중인 아이디입니다.");
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			tfUsername.setText("");
+		} else if (msg.equals("check/yes")) {
+			JOptionPane.showMessageDialog(null, "사용 가능한 아이디입니다.");
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		}
+	}
+
+	public void complete() {
 		joinCompleteBtn = new JButton("회원가입완료");
 		joinCompleteBtn.setBounds(130, 440, 139, 29);
 		contentPane.add(joinCompleteBtn);
@@ -266,25 +282,30 @@ public class Signup extends JFrame {
 				String[] check = { tfUsername.getText(), tfName.getText(), tfpwd.getText(), tfAddress.getText(),
 						tfPhone.getText(), "join" };
 
-				ch.streamSet(check);
+				mc.setObjectforjoin(check, join);
+				// ch.streamSet(check);
 				// if (msg != null) {
-				if (msg.equals("yes")) {
-					JOptionPane.showMessageDialog(null, "회원가입이 완료되었습니다.");
-					dispose();
-				} else if (msg.equals("no")) {
-					JOptionPane.showMessageDialog(null, "회원가입이 실패하였습니다.");
-					dispose();
-				}
-				// }
-//				if (result) {
+//				if (msg.equals("yes")) {
 //					JOptionPane.showMessageDialog(null, "회원가입이 완료되었습니다.");
 //					dispose();
-//				} else {
+//				} else if (msg.equals("no")) {
 //					JOptionPane.showMessageDialog(null, "회원가입이 실패하였습니다.");
 //					dispose();
 //				}
+				// }
 			}
 		});
 
 	}
+
+	public void membercheck(String msg) {
+		if (msg.equals("member/yes")) {
+			JOptionPane.showMessageDialog(null, "회원가입이 완료되었습니다.");
+			dispose();
+		} else if (msg.equals("member/no")) {
+			JOptionPane.showMessageDialog(null, "회원가입이 실패하였습니다.");
+			dispose();
+		}
+	}
+
 }
